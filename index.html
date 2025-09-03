@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trainer Feedback Tool</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #f8f9fa;
+            line-height: 1.6;
+        }
+        .container {
+            background: white;
+            padding: 35px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 28px;
+        }
+        .steps {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 35px;
+            padding: 0 20px;
+        }
+        .step {
+            flex: 1;
+            text-align: center;
+            padding: 15px 8px;
+            margin: 0 5px;
+            border-radius: 8px;
+            background: #e9ecef;
+            color: #6c757d;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        .step.active {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            box-shadow: 0 4px 15px rgba(40,167,69,0.3);
+        }
+        .step.completed {
+            background: linear-gradient(135deg, #007cba, #0056b3);
+            color: white;
+        }
+        .section {
+            margin-bottom: 35px;
+            padding: 25px;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            background: #fdfdfe;
+        }
+        .section h2 {
+            color: #495057;
+            margin-bottom: 20px;
+            font-size: 22px;
+            border-bottom: 3px solid #28a745;
+            padding-bottom: 8px;
+        }
+        .input-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #495057;
+        }
+        input, button, textarea {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            font-size: 16px;
+            margin-bottom: 12px;
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+        }
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: #28a745;
+            box-shadow: 0 0 0 3px rgba(40,167,69,0.1);
+        }
+        textarea {
+            min-height: 150px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            resize: vertical;
+        }
+        button {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        button:hover:not(:disabled) {
+            background: linear-gradient(135deg, #20c997, #17a2b8);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(40,167,69,0.3);
+        }
+        button:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        .secondary-btn {
+            background: linear-gradient(135deg, #6c757d, #495057);
+        }
+        .secondary-btn:hover:not(:disabled) {
+            background: linear-gradient(135deg, #495057, #343a40);
+        }
+        .status {
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 8px;
+            display: none;
+            font-weight: 500;
+            border-left: 5px solid;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border-left-color: #28a745;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border-left-color: #dc3545;
+        }
+        .info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border-left-color: #17a2b8;
+        }
+        audio {
+            width: 100%;
+            margin: 15px 0;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 25px;
+            background: #e9ecef;
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 20px 0;
+            display: none;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #28a745, #20c997);
+            width: 0%;
+            transition: width 0.8s ease;
+            position: relative;
+        }
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, transparent 33%, rgba(255,255,255,0.2) 33%, rgba(255,255,255,0.2) 66%, transparent 66%);
+            background-size: 25px 25px;
+            animation: progressAnimation 1s linear infinite;
+        }
+        @keyframes progressAnimation {
+            0% { background-position: 0 0; }
+            100% { background-position: 25px 0; }
+        }
+        .info-box {
+            background: linear-gradient(135deg, #d4edda, #f0f8f5);
+            border: 1px solid #c3e6cb;
+            padding: 18px;
+            border-radius: 8px;
+            margin: 18px 0;
+            font-size: 14px;
+            color: #155724;
+            border-left: 5px solid #28a745;
+        }
+        .feedback-structure {
+            background: #f8f9fa;
+            border: 2px dashed #28a745;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+        .feedback-structure h4 {
+            color: #28a745;
+            margin: 0 0 15px 0;
+        }
+        .feedback-item {
+            background: white;
+            margin: 10px 0;
+            padding: 12px;
+            border-radius: 6px;
+            border-left: 4px solid #28a745;
+        }
+        .btn-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px;
+        }
+        .btn-group button {
+            flex: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Trainer Feedback Tool</h1>
+        <p style="text-align: center; color: #6c757d; margin-bottom: 30px;">
+            Converteer gesproken trainer feedback naar gestructureerde ontwikkeling bullets
+        </p>
+        
+        <!-- Progress Steps -->
+        <div class="steps">
+            <div class="step active">1. Audio Upload</div>
+            <div class="step">2. Transcriptie</div>
+            <div class="step">3. Feedback Structuur</div>
+        </div>
+
+        <!-- Setup Section -->
+        <div class="section">
+            <h2>Setup</h2>
+            <div class="input-group">
+                <label>OpenAI API Key:</label>
+                <input type="password" id="openaiKey" placeholder="sk-proj-... of sk-...">
+                <div class="info-box">
+                    Voor Whisper transcriptie en ChatGPT feedback structurering
+                </div>
+            </div>
+            
+            <div class="input-group">
+                <label>Trainer Audio Feedback:</label>
+                <input type="file" id="audioFile" accept="audio/*">
+                <audio id="audioPlayer" controls style="display:none;"></audio>
+                <div class="info-box">
+                    Upload audio van trainer die feedback geeft over een medewerker/trainee (altijd 1 spreker)
+                </div>
+            </div>
+            
+            <button id="transcribeBtn" disabled>Start Transcriptie</button>
+            
+            <div class="progress-bar" id="progressBar1">
+                <div class="progress-fill" id="progressFill1"></div>
+            </div>
+            
+            <div id="status1" class="status"></div>
+        </div>
+
+        <!-- Transcription Section -->
+        <div class="section" id="transcriptionSection" style="display:none;">
+            <h2>Transcriptie</h2>
+            <div class="info-box">
+                Transcriptie voltooid! Je kunt de gesproken feedback hieronder bekijken en bewerken.
+            </div>
+            <div class="input-group">
+                <label>Trainer Feedback Transcriptie (bewerkbaar):</label>
+                <textarea id="transcriptionResult" placeholder="Hier verschijnt de transcriptie van de trainer feedback..."></textarea>
+            </div>
+            
+            <button id="structureBtn" class="success-btn" disabled>Structureer Feedback</button>
+            
+            <div class="progress-bar" id="progressBar2">
+                <div class="progress-fill" id="progressFill2"></div>
+            </div>
+            
+            <div id="status2" class="status"></div>
+        </div>
+
+        <!-- Results Section -->
+        <div class="section" id="resultsSection" style="display:none;">
+            <h2>Gestructureerde Feedback</h2>
+            
+            <div class="feedback-structure">
+                <h4>Feedback Structuur (4 bullets):</h4>
+                <div class="feedback-item">✅ Positief punt - Wat gaat goed</div>
+                <div class="feedback-item">🔄 Ontwikkelpunt - Wat kan beter</div>
+                <div class="feedback-item">🎯 Concrete actie - Specifieke verbeterstap</div>
+                <div class="feedback-item">👥 Leidinggevende advies - Hoe manager kan ondersteunen</div>
+            </div>
+            
+            <div class="input-group">
+                <label>Gestructureerde Feedback:</label>
+                <textarea id="feedbackResult" readonly style="min-height: 300px;"></textarea>
+            </div>
+            
+            <div class="btn-group">
+                <button id="newFeedbackBtn" class="secondary-btn">Nieuwe Feedback</button>
+                <button id="restartBtn" class="secondary-btn">Herstart</button>
+                <button id="exportBtn" class="success-btn">Exporteer Beide</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Application state
+        const TrainerState = {
+            audioData: null,
+            currentStep: 1
+        };
+        
+        // Feedback structuring instruction
+        const feedbackInstruction = `# Trainer Feedback Structurering
+
+## Opdracht
+Converteer de gesproken trainer feedback naar een gestructureerde samenvatting met exact 4 bullets.
+
+## Output Format
+Genereer EXACT deze structuur:
+
+**GESTRUCTUREERDE TRAINER FEEDBACK**
+
+• **POSITIEF PUNT:** [Wat gaat goed - specifiek en concreet]
+
+• **ONTWIKKELPUNT:** [Wat kan beter - duidelijk geformuleerd]  
+
+• **CONCRETE ACTIE:** [Specifieke stap die deze persoon kan nemen om te verbeteren]
+
+• **LEIDINGGEVENDE ADVIES:** [Praktische tip voor manager om deze persoon te ondersteunen]
+
+## Richtlijnen
+- Elke bullet moet concreet en actionable zijn
+- Gebruik professionele, constructieve taal
+- Focus op ontwikkeling, niet op kritiek
+- Leidinggevende advies moet praktisch implementeerbaar zijn
+- Maximaal 2-3 zinnen per bullet
+- Houd het positief en ontwikkelingsgericht
+
+Zorg dat alle feedback constructief, specifiek en praktisch implementeerbaar is.`;
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', initializeTrainerTool);
+        
+        function initializeTrainerTool() {
+            loadSavedKey();
+            setupEventListeners();
+            updateSteps();
+        }
+        
+        function loadSavedKey() {
+            const savedKey = localStorage.getItem('openai_api_key');
+            if (savedKey) {
+                document.getElementById('openaiKey').value = savedKey;
+            }
+            validateInputs();
+        }
+        
+        function setupEventListeners() {
+            // Setup
+            document.getElementById('openaiKey').addEventListener('input', validateInputs);
+            document.getElementById('audioFile').addEventListener('change', handleAudioUpload);
+            document.getElementById('transcribeBtn').addEventListener('click', transcribeAudio);
+            
+            // Transcription
+            document.getElementById('transcriptionResult').addEventListener('input', validateStructuring);
+            document.getElementById('structureBtn').addEventListener('click', structureFeedback);
+            
+            // Results
+            document.getElementById('newFeedbackBtn').addEventListener('click', newFeedback);
+            document.getElementById('restartBtn').addEventListener('click', restart);
+            document.getElementById('exportBtn').addEventListener('click', exportFiles);
+            
+            // Auto-resize textareas
+            document.addEventListener('input', e => {
+                if (e.target.tagName === 'TEXTAREA') autoResize(e.target);
+            });
+        }
+        
+        function validateInputs() {
+            const hasKey = document.getElementById('openaiKey').value.length > 0;
+            const hasAudio = TrainerState.audioData !== null;
+            document.getElementById('transcribeBtn').disabled = !hasKey || !hasAudio;
+        }
+        
+        function validateStructuring() {
+            const hasText = document.getElementById('transcriptionResult').value.trim().length > 0;
+            document.getElementById('structureBtn').disabled = !hasText;
+        }
+        
+        function handleAudioUpload(event) {
+            const file = event.target.files[0];
+            if (!file) {
+                TrainerState.audioData = null;
+                validateInputs();
+                return;
+            }
+            
+            if (file.size > 25 * 1024 * 1024) {
+                showStatus('Bestand te groot (max 25MB)', 'error', 1);
+                return;
+            }
+            
+            const ext = file.name.toLowerCase().split('.').pop();
+            if (!['mp3', 'wav', 'm4a', 'ogg', 'webm', 'flac'].includes(ext)) {
+                showStatus('Formaat niet ondersteund', 'error', 1);
+                return;
+            }
+            
+            TrainerState.audioData = file;
+            
+            const player = document.getElementById('audioPlayer');
+            player.src = URL.createObjectURL(file);
+            player.style.display = 'block';
+            
+            const sizeMB = (file.size / 1024 / 1024).toFixed(1);
+            showStatus(`Audio geladen: ${file.name} (${sizeMB}MB)`, 'success', 1);
+            
+            validateInputs();
+        }
+        
+        async function transcribeAudio() {
+            const key = document.getElementById('openaiKey').value;
+            
+            setButton('transcribeBtn', true);
+            showProgress(1, 25);
+            showStatus('Trainer feedback wordt getranscribeerd...', 'info', 1);
+            
+            try {
+                const formData = new FormData();
+                formData.append('file', TrainerState.audioData);
+                formData.append('model', 'whisper-1');
+                formData.append('language', 'nl');
+                
+                showProgress(1, 50);
+                
+                const response = await fetch('https://api.openai.com/v1/audio/transcriptions', {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${key}` },
+                    body: formData
+                });
+                
+                showProgress(1, 75);
+                
+                if (!response.ok) {
+                    throw new Error(`API fout ${response.status}: ${await response.text()}`);
+                }
+                
+                const result = await response.json();
+                if (!result.text) throw new Error('Geen transcriptie ontvangen');
+                
+                document.getElementById('transcriptionResult').value = result.text;
+                localStorage.setItem('openai_api_key', key);
+                
+                document.getElementById('transcriptionSection').style.display = 'block';
+                
+                showProgress(1, 100);
+                showStatus('Transcriptie voltooid!', 'success', 1);
+                
+                autoResize(document.getElementById('transcriptionResult'));
+                validateStructuring();
+                
+                setTimeout(() => {
+                    hideProgress(1);
+                    goToStep(2);
+                }, 2000);
+                
+            } catch (error) {
+                showStatus(`Fout: ${error.message}`, 'error', 1);
+                hideProgress(1);
+            } finally {
+                setButton('transcribeBtn', false);
+            }
+        }
+        
+        async function structureFeedback() {
+            const key = document.getElementById('openaiKey').value;
+            const text = document.getElementById('transcriptionResult').value.trim();
+            
+            setButton('structureBtn', true);
+            showProgress(2, 30);
+            showStatus('Feedback wordt gestructureerd in 4 bullets...', 'info', 2);
+            
+            try {
+                const prompt = `${feedbackInstruction}\n\n--- TRAINER FEEDBACK TRANSCRIPTIE ---\n${text}\n\nStructureer volgens bovenstaande format.`;
+                
+                showProgress(2, 60);
+                
+                const response = await fetch('https://api.openai.com/v1/chat/completions', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${key}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        model: 'gpt-4',
+                        messages: [{ role: 'user', content: prompt }],
+                        max_tokens: 1500,
+                        temperature: 0.3
+                    })
+                });
+                
+                if (!response.ok) throw new Error(`API fout: ${await response.text()}`);
+                
+                const result = await response.json();
+                const structuredFeedback = result.choices[0].message.content;
+                
+                document.getElementById('feedbackResult').value = structuredFeedback;
+                document.getElementById('resultsSection').style.display = 'block';
+                
+                showProgress(2, 100);
+                showStatus('Feedback gestructureerd in 4 bullets!', 'success', 2);
+                
+                autoResize(document.getElementById('feedbackResult'));
+                
+                setTimeout(() => {
+                    hideProgress(2);
+                    goToStep(3);
+                    document.getElementById('resultsSection').scrollIntoView({ 
+                        behavior: 'smooth' 
+                    });
+                }, 2000);
+                
+            } catch (error) {
+                showStatus(`Fout: ${error.message}`, 'error', 2);
+                hideProgress(2);
+            } finally {
+                setButton('structureBtn', false);
+            }
+        }
+        
+        function newFeedback() {
+            document.getElementById('feedbackResult').value = '';
+            document.getElementById('resultsSection').style.display = 'none';
+            goToStep(2);
+            validateStructuring();
+        }
+        
+        function restart() {
+            TrainerState.audioData = null;
+            
+            document.getElementById('audioFile').value = '';
+            document.getElementById('audioPlayer').style.display = 'none';
+            document.getElementById('transcriptionResult').value = '';
+            document.getElementById('feedbackResult').value = '';
+            
+            ['transcriptionSection', 'resultsSection'].forEach(id => {
+                document.getElementById(id).style.display = 'none';
+            });
+            
+            [1, 2].forEach(hideProgress);
+            [1, 2].forEach(i => document.getElementById(`status${i}`).style.display = 'none');
+            
+            goToStep(1);
+            validateInputs();
+            
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        
+        function exportFiles() {
+            const transcription = document.getElementById('transcriptionResult').value;
+            const feedback = document.getElementById('feedbackResult').value;
+            const timestamp = new Date().toISOString().slice(0, 10);
+            
+            if (!transcription || !feedback) {
+                showStatus('Geen data om te exporteren', 'error', 2);
+                return;
+            }
+            
+            // Export 1: Transcriptie
+            const transcriptBlob = new Blob([transcription], { type: 'text/plain;charset=utf-8' });
+            const transcriptUrl = URL.createObjectURL(transcriptBlob);
+            
+            const transcriptLink = document.createElement('a');
+            transcriptLink.href = transcriptUrl;
+            transcriptLink.download = `Trainer_Transcriptie_${timestamp}.txt`;
+            document.body.appendChild(transcriptLink);
+            transcriptLink.click();
+            document.body.removeChild(transcriptLink);
+            URL.revokeObjectURL(transcriptUrl);
+            
+            // Export 2: Gestructureerde Feedback
+            setTimeout(() => {
+                const feedbackBlob = new Blob([feedback], { type: 'text/plain;charset=utf-8' });
+                const feedbackUrl = URL.createObjectURL(feedbackBlob);
+                
+                const feedbackLink = document.createElement('a');
+                feedbackLink.href = feedbackUrl;
+                feedbackLink.download = `Trainer_Feedback_Gestructureerd_${timestamp}.txt`;
+                document.body.appendChild(feedbackLink);
+                feedbackLink.click();
+                document.body.removeChild(feedbackLink);
+                URL.revokeObjectURL(feedbackUrl);
+                
+                showStatus('Beide bestanden geëxporteerd: transcriptie en gestructureerde feedback!', 'success', 2);
+            }, 500);
+        }
+        
+        // Utility functions
+        function goToStep(step) {
+            TrainerState.currentStep = step;
+            updateSteps();
+        }
+        
+        function updateSteps() {
+            const steps = document.querySelectorAll('.step');
+            steps.forEach((step, index) => {
+                const stepNum = index + 1;
+                step.classList.remove('active', 'completed');
+                if (stepNum < TrainerState.currentStep) {
+                    step.classList.add('completed');
+                } else if (stepNum === TrainerState.currentStep) {
+                    step.classList.add('active');
+                }
+            });
+        }
+        
+        function showStatus(message, type, step) {
+            const status = document.getElementById(`status${step}`);
+            status.textContent = message;
+            status.className = `status ${type}`;
+            status.style.display = 'block';
+            
+            if (type === 'success' || type === 'info') {
+                setTimeout(() => {
+                    if (status.textContent === message) {
+                        status.style.display = 'none';
+                    }
+                }, 5000);
+            }
+        }
+        
+        function showProgress(step, percentage) {
+            const bar = document.getElementById(`progressBar${step}`);
+            const fill = document.getElementById(`progressFill${step}`);
+            bar.style.display = 'block';
+            fill.style.width = `${percentage}%`;
+        }
+        
+        function hideProgress(step) {
+            document.getElementById(`progressBar${step}`).style.display = 'none';
+            document.getElementById(`progressFill${step}`).style.width = '0%';
+        }
+        
+        function setButton(buttonId, disabled) {
+            document.getElementById(buttonId).disabled = disabled;
+        }
+        
+        function autoResize(textarea) {
+            textarea.style.height = 'auto';
+            textarea.style.height = Math.max(textarea.scrollHeight, 150) + 'px';
+        }
+    </script>
+</body>
+</html>
