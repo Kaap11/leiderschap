@@ -397,7 +397,7 @@
             <div class="input-group">
                 <label>Kies Feedback Type:</label>
                 <div class="analysis-options">
-                    <div class="analysis-type selected" id="recruitmentAnalysis">
+                    <div class="analysis-type selected" id="leiderschapAnalysis">
                         <h3>🎯 Trainer Feedback</h3>
                         <p>Gestructureerde trainer feedback met 4 bullets (via ChatGPT)</p>
                     </div>
@@ -441,64 +441,31 @@
         // Global variables
         let audioData = null;
         let currentStep = 1;
-        let analysisType = 'recruitment';
+        let analysisType = 'leiderschap';
         let audioMethod = 'upload';
         let mediaRecorder = null;
         let recordingChunks = [];
         let recordingTimer = null;
         let recordingStartTime = 0;
         
-        // Updated recruitment instruction with score-based approach
-        const recruitmentInstruction = `# Feedback Agent voor Recruiter Intakegesprekken
+        // Updated trainer feedback instruction
+        const trainerInstruction = `# Feedback voor Leiderschap
 
-## Rol en Doel
-Je bent een feedback agent gespecialiseerd in het analyseren van kandidaat intakegesprekken van recruiters. Je taak is om constructieve feedback te geven gebaseerd op de Kaap11 training methodieken.
+## Output Format Genereer EXACT deze structuur: 
 
-## STAP 1: KANDIDAAT ZOEK-ACTIVITEIT SCORE (VERPLICHT)
-Begin ALTIJD met het bepalen van een zoek-activiteit score op schaal 1-10:
+GESTRUCTUREERDE TRAINER FEEDBACK 
+• POSITIEF PUNT: [Wat gaat goed - specifiek en concreet] 
+• ONTWIKKELPUNT: [Wat kan beter - duidelijk geformuleerd] 
+• CONCRETE ACTIE: [Specifieke stap die deze persoon kan nemen om te verbeteren] 
+• LEIDINGGEVENDE ADVIES: [Praktische tip voor manager om deze persoon te ondersteunen] 
 
-**Score 8-10: ACTIEF ZOEKEND**
-- Expliciet zoekgedrag ("Ik ben op zoek naar...", "solliciteer momenteel")
-- Urgentie ("zo snel mogelijk", "binnen X weken beschikbaar")
-- Concrete verwachtingen (specifieke salariseisen, functiewensen)
-- Actieve engagement (veel vragen over vacature/proces)
-
-**Score 2-7: LATENTE KANDIDAAT**
-- Passieve interesse ("houd ogen open", "als er iets voorbij komt")
-- Voorwaardelijk ("alleen voor juiste aanbod")
-- Exploratie ("benieuwd naar", "hangt af van omstandigheden")
-- Geen urgentie ("heb geen haast", "zit goed waar ik nu zit")
-
-**Score 1: NIET ZOEKEND**
-- Expliciet afwijzend ("ben niet op zoek", "heel tevreden")
-- Geen interesse (korte antwoorden, weinig engagement)
-- Sterke binding ("geweldige werkgever", recente promotie)
-
-## FEEDBACK STRUCTUUR
-
-### 📊 KANDIDAAT ANALYSE
-**Zoek-Activiteit Score: X/10**
-**Kandidaat Type: [ACTIEF ZOEKEND/LATENT/NIET ZOEKEND]**
-**Bewijs:** [Citaten die score ondersteunen]
-
-### 🎯 METHODIEK EVALUATIE
-Gebruik de juiste methodiek op basis van score:
-- **Score 8-10**: RedCarpet Intake methodiek
-- **Score 2-7**: W.E.R.K. model + LRD techniek
-- **Score 1**: Acquisitie benadering
-
-### 📋 CONCRETE FEEDBACK
-Voor elk aspect geef:
-- Wat ging goed (met voorbeelden)
-- Wat kan beter (met concrete tips)
-- Praktische verbeteracties
-
-### ⭐ SAMENVATTING
-- Top 3 sterke punten
-- Top 3 verbeterpunten
-- Concrete actiepunten voor volgende gesprekken
-
-Begin met: "Op basis van de transcriptie bepaal ik eerst de kandidaat zoek-activiteit score..."`;
+## Richtlijnen 
+- Elke bullet moet concreet en actionable zijn 
+- Gebruik professionele, constructieve taal 
+- Focus op ontwikkeling, niet op kritiek 
+- Leidinggevende advies moet praktisch implementeerbaar zijn 
+- Maximaal 2-3 zinnen per bullet 
+- Houd het positief en ontwikkelingsgericht
 
         // Initialize app
         document.addEventListener('DOMContentLoaded', function() {
@@ -534,7 +501,7 @@ Begin met: "Op basis van de transcriptie bepaal ik eerst de kandidaat zoek-activ
             document.getElementById('generateFeedbackBtn').addEventListener('click', generateFeedback);
             
             // Analysis type selection
-            document.getElementById('recruitmentAnalysis').addEventListener('click', () => selectAnalysisType('recruitment'));
+            document.getElementById('leiderschapAnalysis').addEventListener('click', () => selectAnalysisType('leiderschap'));
             document.getElementById('customAnalysis').addEventListener('click', () => selectAnalysisType('custom'));
             
             // Control buttons
@@ -582,7 +549,7 @@ Begin met: "Op basis van de transcriptie bepaal ik eerst de kandidaat zoek-activ
         
         function validateFeedbackGeneration() {
             const transcription = document.getElementById('transcriptionResult').value.trim();
-            const hasInstruction = analysisType === 'recruitment' || document.getElementById('customInstruction').value.trim();
+            const hasInstruction = analysisType === 'leiderschap' || document.getElementById('customInstruction').value.trim();
             
             document.getElementById('generateFeedbackBtn').disabled = !transcription || !hasInstruction;
         }
@@ -830,7 +797,7 @@ Begin met: "Op basis van de transcriptie bepaal ik eerst de kandidaat zoek-activ
             analysisType = type;
             
             // Update UI
-            document.getElementById('recruitmentAnalysis').classList.toggle('selected', type === 'recruitment');
+            document.getElementById('leiderschapAnalysis').classList.toggle('selected', type === 'leiderschap');
             document.getElementById('customAnalysis').classList.toggle('selected', type === 'custom');
             
             // Show/hide custom instruction field
@@ -856,8 +823,8 @@ Begin met: "Op basis van de transcriptie bepaal ik eerst de kandidaat zoek-activ
             
             // Get instruction
             let instruction = '';
-            if (analysisType === 'recruitment') {
-                instruction = recruitmentInstruction;
+            if (analysisType === 'leiderschap') {
+                instruction = leiderschapInstruction;
             } else {
                 instruction = document.getElementById('customInstruction').value.trim();
                 if (!instruction) {
@@ -1014,7 +981,7 @@ Geef je gedetailleerde analyse en feedback volgens de bovenstaande instructies.`
             
             // Reset selections
             selectAudioMethod('upload');
-            selectAnalysisType('recruitment');
+            selectAnalysisType('leiderschap');
             
             // Re-validate
             validateInputs();
