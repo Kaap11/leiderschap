@@ -398,8 +398,8 @@
                 <label>Kies Feedback Type:</label>
                 <div class="analysis-options">
                     <div class="analysis-type selected" id="recruitmentAnalysis">
-                        <h3>🎯 Recruitment Feedback</h3>
-                        <p>KAAP11 methodiek voor recruiter gesprekken (via ChatGPT)</p>
+                        <h3>🎯 Leiderschap Feedback</h3>
+                        <p>Een samenvatting met concrete actiepunten (via ChatGPT)</p>
                     </div>
                     <div class="analysis-type" id="customAnalysis">
                         <h3>⚙️ Custom Feedback</h3>
@@ -824,7 +824,7 @@ Genereer EXACT deze structuur:
             // Get instruction
             let instruction = '';
             if (analysisType === 'recruitment') {
-                instruction = recruitmentInstruction;
+                instruction = trainerInstruction;
             } else {
                 instruction = document.getElementById('customInstruction').value.trim();
                 if (!instruction) {
