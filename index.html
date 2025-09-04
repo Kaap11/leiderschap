@@ -397,9 +397,9 @@
             <div class="input-group">
                 <label>Kies Feedback Type:</label>
                 <div class="analysis-options">
-                    <div class="analysis-type selected" id="leiderschapAnalysis">
-                        <h3>🎯 Trainer Feedback</h3>
-                        <p>Gestructureerde trainer feedback met 4 bullets (via ChatGPT)</p>
+                    <div class="analysis-type selected" id="recruitmentAnalysis">
+                        <h3>🎯 Recruitment Feedback</h3>
+                        <p>KAAP11 methodiek voor recruiter gesprekken (via ChatGPT)</p>
                     </div>
                     <div class="analysis-type" id="customAnalysis">
                         <h3>⚙️ Custom Feedback</h3>
@@ -441,31 +441,31 @@
         // Global variables
         let audioData = null;
         let currentStep = 1;
-        let analysisType = 'leiderschap';
+        let analysisType = 'recruitment';
         let audioMethod = 'upload';
         let mediaRecorder = null;
         let recordingChunks = [];
         let recordingTimer = null;
         let recordingStartTime = 0;
         
-        // Updated trainer feedback instruction
-        const trainerInstruction = `# Feedback voor Leiderschap
+        // Updated recruitment instruction with score-based approach
+        const trainerInstruction = `## Output Format 
+Genereer EXACT deze structuur:
 
-## Output Format Genereer EXACT deze structuur: 
+**GESTRUCTUREERDE TRAINER FEEDBACK**
 
-GESTRUCTUREERDE TRAINER FEEDBACK 
-• POSITIEF PUNT: [Wat gaat goed - specifiek en concreet] 
-• ONTWIKKELPUNT: [Wat kan beter - duidelijk geformuleerd] 
-• CONCRETE ACTIE: [Specifieke stap die deze persoon kan nemen om te verbeteren] 
-• LEIDINGGEVENDE ADVIES: [Praktische tip voor manager om deze persoon te ondersteunen] 
+- **POSITIEF PUNT:** [Wat gaat goed - specifiek en concreet]
+- **ONTWIKKELPUNT:** [Wat kan beter - duidelijk geformuleerd]
+- **CONCRETE ACTIE:** [Specifieke stap die deze persoon kan nemen om te verbeteren]
+- **LEIDINGGEVENDE ADVIES:** [Praktische tip voor manager om deze persoon te ondersteunen]
 
-## Richtlijnen 
-- Elke bullet moet concreet en actionable zijn 
-- Gebruik professionele, constructieve taal 
-- Focus op ontwikkeling, niet op kritiek 
-- Leidinggevende advies moet praktisch implementeerbaar zijn 
-- Maximaal 2-3 zinnen per bullet 
-- Houd het positief en ontwikkelingsgericht
+## Richtlijnen
+- Elke bullet moet concreet en actionable zijn
+- Gebruik professionele, constructieve taal
+- Focus op ontwikkeling, niet op kritiek
+- Leidinggevende advies moet praktisch implementeerbaar zijn
+- Maximaal 2-3 zinnen per bullet
+- Houd het positief en ontwikkelingsgericht`;
 
         // Initialize app
         document.addEventListener('DOMContentLoaded', function() {
@@ -501,7 +501,7 @@ GESTRUCTUREERDE TRAINER FEEDBACK
             document.getElementById('generateFeedbackBtn').addEventListener('click', generateFeedback);
             
             // Analysis type selection
-            document.getElementById('leiderschapAnalysis').addEventListener('click', () => selectAnalysisType('leiderschap'));
+            document.getElementById('recruitmentAnalysis').addEventListener('click', () => selectAnalysisType('recruitment'));
             document.getElementById('customAnalysis').addEventListener('click', () => selectAnalysisType('custom'));
             
             // Control buttons
@@ -549,7 +549,7 @@ GESTRUCTUREERDE TRAINER FEEDBACK
         
         function validateFeedbackGeneration() {
             const transcription = document.getElementById('transcriptionResult').value.trim();
-            const hasInstruction = analysisType === 'leiderschap' || document.getElementById('customInstruction').value.trim();
+            const hasInstruction = analysisType === 'recruitment' || document.getElementById('customInstruction').value.trim();
             
             document.getElementById('generateFeedbackBtn').disabled = !transcription || !hasInstruction;
         }
@@ -797,7 +797,7 @@ GESTRUCTUREERDE TRAINER FEEDBACK
             analysisType = type;
             
             // Update UI
-            document.getElementById('leiderschapAnalysis').classList.toggle('selected', type === 'leiderschap');
+            document.getElementById('recruitmentAnalysis').classList.toggle('selected', type === 'recruitment');
             document.getElementById('customAnalysis').classList.toggle('selected', type === 'custom');
             
             // Show/hide custom instruction field
@@ -823,8 +823,8 @@ GESTRUCTUREERDE TRAINER FEEDBACK
             
             // Get instruction
             let instruction = '';
-            if (analysisType === 'leiderschap') {
-                instruction = leiderschapInstruction;
+            if (analysisType === 'recruitment') {
+                instruction = recruitmentInstruction;
             } else {
                 instruction = document.getElementById('customInstruction').value.trim();
                 if (!instruction) {
@@ -981,7 +981,7 @@ Geef je gedetailleerde analyse en feedback volgens de bovenstaande instructies.`
             
             // Reset selections
             selectAudioMethod('upload');
-            selectAnalysisType('leiderschap');
+            selectAnalysisType('recruitment');
             
             // Re-validate
             validateInputs();
