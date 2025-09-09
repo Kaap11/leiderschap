@@ -449,21 +449,32 @@
         let recordingStartTime = 0;
         
         // Updated recruitment instruction with score-based approach
-        const trainerInstruction = `## Output Format 
-Genereer EXACT deze structuur:
+        const trainerInstruction = `## Analyse Instructie
+Analyseer de transcriptie systematisch:
+1. Identificeer alle genoemde deelnemers (gebruik namen als gegeven, anders "Deelnemer 1", "Deelnemer 2", etc.)
+2. Extraheer voor elke deelnemer de specifieke feedback die de trainer geeft
+3. Organiseer per persoon de feedback in de gestructureerde format
 
+## Output Format 
+Voor ELKE deelnemer die wordt besproken, genereer deze structuur:
+
+### [NAAM/DEELNEMER X]
 **GESTRUCTUREERDE TRAINER FEEDBACK**
-
 - **POSITIEF PUNT:** [Wat gaat goed - specifiek en concreet]
-- **ONTWIKKELPUNT:** [Wat kan beter - duidelijk geformuleerd]
+- **ONTWIKKELPUNT:** [Wat kan beter - duidelijk geformuleerd] 
 - **CONCRETE ACTIE:** [Specifieke stap die deze persoon kan nemen om te verbeteren]
 - **LEIDINGGEVENDE ADVIES:** [Praktische tip voor manager om deze persoon te ondersteunen]
 
+---
+
 ## Richtlijnen
+- Behandel elke deelnemer afzonderlijk, ook als ze in één zin worden genoemd
+- Als een deelnemer slechts kort wordt genoemd, geef aan welke informatie beschikbaar is
+- Gebruik de exacte namen uit de transcriptie wanneer mogelijk
+- Bij onduidelijke toewijzing, vermeld dit expliciet ("Onduidelijk of dit over Jan of Piet gaat")
 - Elke bullet moet concreet en actionable zijn
 - Gebruik professionele, constructieve taal
 - Focus op ontwikkeling, niet op kritiek
-- Leidinggevende advies moet praktisch implementeerbaar zijn
 - Maximaal 2-3 zinnen per bullet
 - Houd het positief en ontwikkelingsgericht`;
 
